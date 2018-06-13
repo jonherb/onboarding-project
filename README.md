@@ -2,7 +2,7 @@
 
 This project is intended to help you tie together some important concepts and
 technologies from the 12-day course, including Git, Flask, JSON, Pandas,
-Requests, Heroku, and Bokeh for visualization.
+Requests, Heroku, and Bokeh for visualization. [test-edit for initial commit]
 
 The repository contains a basic template for a Flask configuration that will
 work on Heroku.
