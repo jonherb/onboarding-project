@@ -7,7 +7,7 @@ from bokeh.resources import CDN
 from bokeh.embed import file_html
 import requests as rq
 import simplejson as sj
-import os
+# import os
 
 import sys
 if sys.version_info[0] < 3: 
@@ -15,7 +15,8 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO
     
-apikey = os.environ.get('ALPHAADVANTAGE_KEY')
+# apikey = os.environ.get('ALPHAADVANTAGE_KEY')
+apikey = 'demo'
 
 app = Flask(__name__)
 app.vars = {}
