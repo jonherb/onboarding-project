@@ -2,12 +2,11 @@ from flask import Flask, render_template, request, redirect
 import requests as rq
 from pandas import *
 from bokeh.plotting import figure, output_file, show
-from bokeh.charts import TimeSeries
 from bokeh.resources import CDN
 from bokeh.embed import file_html
 import requests as rq
 import simplejson as sj
-# import os
+import os
 
 import sys
 if sys.version_info[0] < 3: 
@@ -15,7 +14,6 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO
     
-# apikey = os.environ.get('ALPHAADVANTAGE_KEY')
 apikey = 'demo'
 
 app = Flask(__name__)
@@ -39,15 +37,17 @@ def make_output():
     df = StringIO(df.text)
     df = read_csv(df)
     df.timestamp = to_datetime(df.timestamp)
-    df = df.set_index('timestamp')
+    df = df.set_index('timestamp', drop = False)
     
     date_filter = to_datetime(app.vars['month'])
     year_month_filter = str(date_filter.year) + '-' + str(date_filter.month)
     df_f = df.loc[year_month_filter]
-    df_f_close = df_f.loc[:, ['close']]
+    df_f_close = df_f.loc[:,['timestamp', 'close']]
     
-    fig = TimeSeries(df_f_close, title = 'Stock Closing Price of ' + str(app.vars['stock_label']) + 
-       ' Over ' + str(app.vars['month']), xlabel = 'date', ylabel = 'closing price', legend = False)
+    fig = figure(x_axis_type="datetime", x_axis_label = 'date', y_axis_label = 'closing price', 
+            title = 'Stock Closing Price of ' + app.vars['stock_label'] + ' Over ' + app.vars['month'],)
+    
+    fig.line('timestamp', 'close', source = df_f)
     
     output_html = file_html(fig, CDN, 'output plot')
     
@@ -55,4 +55,4 @@ def make_output():
 
 
 if __name__ == '__main__':
-  app.run(host = '0.0.0.0')
+    app.run(host = '0.0.0.0')
