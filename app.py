@@ -14,7 +14,7 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO
     
-apikey = 'demo'
+apikey = os.environ.get('ALPHAADVANTAGE_KEY')
 
 app = Flask(__name__)
 app.vars = {}
