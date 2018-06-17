@@ -14,6 +14,7 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO
     
+# key first specified in heroku:config for app
 apikey = os.environ.get('ALPHAADVANTAGE_KEY')
 
 app = Flask(__name__)
@@ -53,6 +54,7 @@ def make_output():
     
     return output_html
 
-
+# port grabbed from heroku deployment environ (set to default 5000 if no environ setting) 
 if __name__ == '__main__':
-    app.run(host = '0.0.0.0')
+    port = int(os.env.get('PORT', 5000))
+    app.run(host = '0.0.0.0', port = port)
