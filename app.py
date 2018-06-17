@@ -17,7 +17,6 @@ else:
 apikey = os.environ.get('ALPHAADVANTAGE_KEY')
 
 app = Flask(__name__)
-app.vars = {}
 
 @app.route('/', methods = ['GET'])
 def get_input():
@@ -25,12 +24,13 @@ def get_input():
 
 @app.route('/', methods = ['POST'])
 def make_output():
+    user_inp = {}
     # stock label entry is what's in the input.html file, field entered by user]
-    app.vars['stock_label'] = request.form['stock_label_entry']
-    app.vars['month'] = request.form['month_entry']
+    user_inp['stock_label'] = request.form['stock_label_entry']
+    user_inp['month'] = request.form['month_entry']
     
     
-    payload = {'function': 'TIME_SERIES_DAILY', 'symbol': app.vars['stock_label'], 'outputsize': 'full', 
+    payload = {'function': 'TIME_SERIES_DAILY', 'symbol': user_inp['stock_label'], 'outputsize': 'full', 
            'apikey': apikey, 'datatype': 'csv'}
     
     df = rq.get('https://www.alphavantage.co/query', params = payload)
@@ -39,13 +39,13 @@ def make_output():
     df.timestamp = to_datetime(df.timestamp)
     df = df.set_index('timestamp', drop = False)
     
-    date_filter = to_datetime(app.vars['month'])
+    date_filter = to_datetime(user_inp['month'])
     year_month_filter = str(date_filter.year) + '-' + str(date_filter.month)
     df_f = df.loc[year_month_filter]
     df_f_close = df_f.loc[:,['timestamp', 'close']]
     
     fig = figure(x_axis_type="datetime", x_axis_label = 'date', y_axis_label = 'closing price', 
-            title = 'Stock Closing Price of ' + app.vars['stock_label'] + ' Over ' + app.vars['month'],)
+            title = 'Stock Closing Price of ' + user_inp['stock_label'] + ' Over ' + user_inp['month'],)
     
     fig.line('timestamp', 'close', source = df_f)
     
